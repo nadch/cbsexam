@@ -25,6 +25,8 @@ public final class Encryption {
     } else {
       // We return without having done anything
       return rawString;
+
+
     }
   }
 }
