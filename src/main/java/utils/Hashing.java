@@ -47,30 +47,32 @@ public final class Hashing {
 
     public String hashWithSalt(String rawString) {
         setSalt("jkshgksdjhf");
-        String hasedandsalt = (rawString + salt);
+        String hashandsalt = (rawString + salt);
 
-        return sha()
+        return sha(hashandsalt);
+    }
 
-        // TODO: You should add a salt and make this secure
-        public static String sha(String rawString){
-            try {
-                // We load the hashing algoritm we wish to use.
-                MessageDigest digest = MessageDigest.getInstance("SHA-256");
+    // TODO: You should add a salt and make this secure
+    public static String sha(String rawString){
 
-                // We convert to byte array
-                byte[] hash = digest.digest(rawString.getBytes(StandardCharsets.UTF_8));
+        try {
+            // We load the hashing algoritm we wish to use.
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
-                // We create the hashed string
-                String sha256hex = new String(Hex.encode(hash));
+            // We convert to byte array
+            byte[] hash = digest.digest(rawString.getBytes(StandardCharsets.UTF_8));
 
-                // And return the string
-                return sha256hex;
+            // We create the hashed string
+            String sha256hex = new String(Hex.encode(hash));
 
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
+            // And return the string
+            return sha256hex;
 
-            return rawString;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
         }
+
+        return rawString;
     }
 }
+
