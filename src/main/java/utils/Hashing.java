@@ -10,7 +10,7 @@ public final class Hashing {
 
     // TODO: You should add a salt and make this secure
 
-    public String salt;
+    public static String salt = "jkshgksdjhf";
 
     public static String md5(String rawString) {
         try {
@@ -45,14 +45,13 @@ public final class Hashing {
         this.salt = salt;
     }
 
-    public String hashWithSalt(String rawString) {
-        setSalt("jkshgksdjhf");
+    public static String hashWithSalt(String rawString) {
         String hashandsalt = (rawString + salt);
-
         return sha(hashandsalt);
+
     }
 
-    // TODO: You should add a salt and make this secure
+    // TODO: You should add a salt and make this secure (FIXED)
     public static String sha(String rawString){
 
         try {

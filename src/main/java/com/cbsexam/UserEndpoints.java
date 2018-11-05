@@ -94,26 +94,29 @@ public class UserEndpoints  {
     }
   }
 
-  // TODO: Make the system able to login users and assign them a token to use throughout the system.
+  // TODO: Make the system able to login users and assign them a token to use throughout the system. (in progress)
   @POST
   @Path("/login")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response loginUser(String current) {
 
-      User LoggedinUser = new Gson().fromJson(current, User.class);
+      User LoggedinUser= new Gson().fromJson(current, User.class);
 
-      LoggedinUser.getPassword();
-      LoggedinUser.getEmail();
-
-
-      if (LoggedinUser.password.
+      if(UserController.loginUser(LoggedinUser)) {
+        return Response.status(200).entity("Endpoint not implemented yet").build();
+      } else {
+          return Response.status(400).entity("Endpoint not implemented yet").build();
+      }
 
     // Return a response with status 200 and JSON as type
-    return Response.status(400).entity("Endpoint not implemented yet").build();
   }
 
-  // TODO: Make the system able to delete users
-  public Response deleteUser(String x) {
+  // TODO: Make the system able to delete users(in progress)
+  public Response deleteUser(String gone) {
+
+      User UserToDelete = new Gson().fromJson(gone, User.class);
+
+      UserController.deleteUser(UserToDelete);
 
     // Return a response with status 200 and JSON as type
     return Response.status(400).entity("Endpoint not implemented yet").build();

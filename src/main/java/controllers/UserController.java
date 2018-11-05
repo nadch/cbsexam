@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import model.User;
+import utils.Hashing;
 import utils.Log;
 
 public class UserController {
@@ -93,6 +94,58 @@ public class UserController {
     return users;
   }
 
+  public static boolean loginUser(User user) {
+
+      // Check for DB Connection
+
+      if (dbCon == null) {
+          dbCon = new DatabaseController();
+      }
+
+      // Build SQL
+      String sql = "SELECT * FROM user where email = " + user.email + " and password = "+ user.getPassword();
+
+      // Actually do the query
+      ResultSet rs = dbCon.query(sql);
+
+    try {
+
+      if (rs.next()) {
+        return true;
+      } else {
+          return false;
+      }
+    }
+
+    catch (SQLException ex) {
+        System.out.println(ex.getMessage());
+        return false;
+    }
+  }
+
+  public static boolean deleteUser(User user){
+
+      if (dbCon == null) {
+      dbCon = new DatabaseController();
+
+          // Build SQL
+          String sql = "DELETE FROM user WHERE id = "+user.id;
+
+          // Do the query and initialyze an empty list for use if we don't get results
+          ResultSet rs = dbCon.query(sql);
+
+
+          //husk at implementer så token skal til for at slette en bruger.
+
+  }
+
+
+
+
+
+
+  }
+
   public static User createUser(User user) {
 
     // Write in log that we've reach this step
@@ -107,14 +160,14 @@ public class UserController {
     }
 
     // Insert the user in the DB
-    // TODO: Hash the user password before saving it.
+    // TODO: Hash the user password before saving it.(Fixed?)
     int userID = dbCon.insert(
         "INSERT INTO user(first_name, last_name, password, email, created_at) VALUES('"
             + user.getFirstname()
             + "', '"
             + user.getLastname()
             + "', '"
-            + user.getPassword()
+            + Hashing.hashWithSalt(user.getPassword())
             + "', '"
             + user.getEmail()
             + "', "
@@ -132,4 +185,5 @@ public class UserController {
     // Return user
     return user;
   }
+
 }
