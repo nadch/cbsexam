@@ -119,7 +119,7 @@ public class UserEndpoints  {
       UserController.deleteUser(UserToDelete);
 
     // Return a response with status 200 and JSON as type
-    return Response.status(400).entity("Endpoint not implemented yet").build();
+    return Response.status(200).entity("Endpoint not implemented yet").build();
   }
 
   // TODO: Make the system able to update users
