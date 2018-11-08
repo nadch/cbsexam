@@ -81,6 +81,30 @@ public class DatabaseController {
     return rs;
   }
 
+  public int returnIfDeleted (String sql) {
+
+    // Check if we have a connection
+    if (connection == null)
+      connection = getConnection();
+
+
+    try {
+      // Build the statement as a prepared statement
+      PreparedStatement stmt = connection.prepareStatement(sql);
+
+
+      return stmt.executeUpdate();
+
+
+    } catch (SQLException e) {
+      System.out.println(e.getMessage());
+    }
+
+    return 0;
+  }
+
+
+
   public int insert(String sql) {
 
     // Set key to 0 as a start
@@ -111,3 +135,5 @@ public class DatabaseController {
     return result;
   }
 }
+
+

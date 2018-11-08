@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import model.User;
 import utils.Hashing;
 import utils.Log;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+
 
 public class UserController {
 
@@ -96,7 +100,7 @@ public class UserController {
 
 
 
-  public static User createToken(User user) {
+  public static String createToken(User user) {
 
       try {
           Algorithm algorithm = Algorithm.HMAC256("secret");
@@ -104,12 +108,14 @@ public class UserController {
                   .withIssuer("auth0")
                   .sign(algorithm);
 
+          return token;
+
       } catch (JWTCreationException exception) {
           //Invalid Signing configuration / Couldn't convert Claims.
 
       }
 
-      return user;
+      return "";
   }
 
   public static boolean loginUser(User user) {
@@ -130,14 +136,14 @@ public class UserController {
 
           if (rs.next()) {
 
-              createToken(user);
+              user.setToken(createToken(user));
           }
       } catch (SQLException ex) {
           System.out.println(ex.getMessage());
           return false;
       }
 
-
+    return true;
   }
   public static boolean deleteUser(User user) {
 
@@ -149,9 +155,9 @@ public class UserController {
       String sql = "DELETE FROM user WHERE id = " + user.id;
 
       // Do the query and initialyze an empty list for use if we don't get results
-      ResultSet rs = dbCon.query(sql);
+      int d = dbCon.returnIfDeleted(sql);
 
-      if (rs==null){return false;} else {return true;}
+      if (d==0){return false;} else {return true;}
 
       //husk at implementer så token skal til for at slette en bruger.
 
