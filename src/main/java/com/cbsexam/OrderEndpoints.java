@@ -1,5 +1,6 @@
 package com.cbsexam;
 
+import cache.OrderCache;
 import com.google.gson.Gson;
 import controllers.OrderController;
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class OrderEndpoints {
   public Response getOrders() {
 
     // Call our controller-layer in order to get the order from the DB
-    ArrayList<Order> orders = OrderController.getOrders();
+    ArrayList<Order> orders = orderCache.getOrders(false);
 
     // TODO: Add Encryption to JSON (FIXED)
     // We convert the java object to json with GSON library imported in Maven
@@ -55,6 +56,8 @@ public class OrderEndpoints {
     return Response.status(200).type(MediaType.TEXT_PLAIN_TYPE).entity(json).build();
   }
 
+  OrderCache orderCache = new OrderCache();
+
   @POST
   @Path("/")
   @Consumes(MediaType.APPLICATION_JSON)
@@ -65,6 +68,8 @@ public class OrderEndpoints {
 
     // Use the controller to add the user
     Order createdOrder = OrderController.createOrder(newOrder);
+
+      ArrayList<Order> orders = orderCache.getOrders(true);
 
     // Get the user back with the added ID and return it to the user
     String json = new Gson().toJson(createdOrder);

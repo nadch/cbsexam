@@ -152,7 +152,7 @@ public class UserController {
       }
 
       // Build SQL
-      String sql = "DELETE FROM user WHERE id = " + user.id;
+      String sql = "DELETE FROM user WHERE id = " + user.id + "and Token" + user.getToken();
 
       // Do the query and initialyze an empty list for use if we don't get results
       int d = dbCon.returnIfDeleted(sql);
@@ -179,10 +179,9 @@ public class UserController {
       dbCon = new DatabaseController();
     }
 
-    // Insert the user in the DB
-    // TODO: Hash the user password before saving it.(FIXED)
-    int userID = dbCon.insert(
-        "INSERT INTO user(first_name, last_name, password, email, created_at) VALUES('"
+      PreparedStatement nyeBruger = null;
+
+    String nyeBrugerSql = "INSERT INTO user(first_name, last_name, password, email, created_at) VALUES('"
             + user.getFirstname()
             + "', '"
             + user.getLastname()
@@ -192,18 +191,39 @@ public class UserController {
             + user.getEmail()
             + "', "
             + user.getCreatedTime()
-            + ")");
+            + ")";
 
-    if (userID != 0) {
-      //Update the userid of the user before returning
-      user.setId(userID);
-    } else{
-      // Return null if user has not been inserted into database
-      return null;
+      try {
+          dbCon.setAutoCommit(false);
+          nyeBrugerSql = dbCon.prepareStatement(nyeBruger);
+
+
+          for (Map.Entry<String, Integer> e : salesForWeek.entrySet()) {
+
+              nyeBruger.
+              dbCon.commit();
+
+
+          }}
+  } catch (SQLException e ) {
+        JDBCTutorialUtilities.printSQLException(e);
+        if (con != null) {
+            try {
+                System.err.print("Transaction is being rolled back");
+                con.rollback();
+            } catch(SQLException excep) {
+                JDBCTutorialUtilities.printSQLException(excep);
+            }
+        }
+    } finally {
+        if (updateSales != null) {
+            updateSales.close();
+        }
+        if (updateTotal != null) {
+            updateTotal.close();
+        }
+        con.setAutoCommit(true);
     }
 
-    // Return user
-    return user;
-  }
+      }
 
-}

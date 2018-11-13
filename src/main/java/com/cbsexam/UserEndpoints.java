@@ -1,5 +1,6 @@
 package com.cbsexam;
 
+import cache.UserCache;
 import com.google.gson.Gson;
 import controllers.UserController;
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ public class UserEndpoints  {
     Log.writeLog(this.getClass().getName(), this, "Get all users", 0);
 
     // Get a list of users
-    ArrayList<User> users = UserController.getUsers();
+    ArrayList<User> users = userCache.getUsers(false);
 
     // TODO: Add Encryption to JSON (FIXED)
     // Transfer users to json in order to return it to the user
@@ -71,6 +72,8 @@ public class UserEndpoints  {
     return Response.status(200).type(MediaType.APPLICATION_JSON).entity(json).build();
   }
 
+  UserCache userCache = new UserCache();
+
   @POST
   @Path("/")
   @Consumes(MediaType.APPLICATION_JSON)
@@ -81,6 +84,8 @@ public class UserEndpoints  {
 
     // Use the controller to add the user
     User createUser = UserController.createUser(newUser);
+
+      ArrayList<User> users = userCache.getUsers(true);
 
     // Get the user back with the added ID and return it to the user
     String json = new Gson().toJson(createUser);
@@ -103,23 +108,24 @@ public class UserEndpoints  {
       User LoggedinUser= new Gson().fromJson(current, User.class);
 
       if(UserController.loginUser(LoggedinUser)) {
-        return Response.status(200).entity("Endpoint not implemented yet").build();
+        return Response.status(200).entity("Welcome, we hope you enjoy your experience").build();
       } else {
-          return Response.status(400).entity("Endpoint not implemented yet").build();
+          return Response.status(400).entity("There seems to be a problem. Try refreshing the page and trying again og contact support").build();
       }
 
     // Return a response with status 200 and JSON as type
   }
 
-  // TODO: Make the system able to delete users(in progress)
+  // TODO: Make the system able to delete users(Verify)
   public Response deleteUser(String gone) {
 
       User UserToDelete = new Gson().fromJson(gone, User.class);
 
+
       UserController.deleteUser(UserToDelete);
 
     // Return a response with status 200 and JSON as type
-    return Response.status(200).entity("Endpoint not implemented yet").build();
+    return Response.status(200).entity("You user has now been deleted. Goodbye buddy, you meant a lot to us.").build();
   }
 
   // TODO: Make the system able to update users

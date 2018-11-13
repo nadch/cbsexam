@@ -81,6 +81,7 @@ public class DatabaseController {
     return rs;
   }
 
+
   public int returnIfDeleted (String sql) {
 
     // Check if we have a connection

@@ -60,8 +60,8 @@ public class User {
       this.password = password;
       }
 
-      public void setToken (String password){
-          this.token = password;
+      public void setToken (String token){
+          this.token = token;
       }
       public String getToken() {
         return token;

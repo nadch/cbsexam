@@ -1,5 +1,6 @@
 package com.cbsexam;
 
+import cache.ProductCache;
 import com.google.gson.Gson;
 import controllers.ProductController;
 import java.util.ArrayList;
@@ -37,13 +38,15 @@ public class ProductEndpoints {
     return Response.status(200).type(MediaType.TEXT_PLAIN_TYPE).entity(json).build();
   }
 
+  static ProductCache productCache = new ProductCache();
+
   /** @return Responses */
   @GET
   @Path("/")
   public Response getProducts() {
 
     // Call our controller-layer in order to get the order from the DB
-    ArrayList<Product> products = ProductController.getProducts();
+    ArrayList<Product> products = productCache.getProducts(false);
 
     // TODO: Add Encryption to JSON (FIXED)
     // We convert the java object to json with GSON library imported in Maven
@@ -65,6 +68,8 @@ public class ProductEndpoints {
 
     // Use the controller to add the user
     Product createdProduct = ProductController.createProduct(newProduct);
+
+      ArrayList<Product> products = productCache.getProducts(true);
 
     // Get the user back with the added ID and return it to the user
     String json = new Gson().toJson(createdProduct);
