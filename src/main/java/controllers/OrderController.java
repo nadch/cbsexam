@@ -114,8 +114,9 @@ public class OrderController {
     return orders;
   }
 
-  public static Order createOrder(Order order) {
+  public static Order createOrder(Order order)
 
+      throws SQLException {
     // Write in log that we've reach this step
     Log.writeLog(OrderController.class.getName(), order, "Actually creating a order in DB", 0);
 
@@ -136,6 +137,8 @@ public class OrderController {
     order.setCustomer(UserController.createUser(order.getCustomer()));
 
     // TODO: Enable transactions in order for us to not save the order if somethings fails for some of the other inserts. (kan det passe?)
+   try{
+       DatabaseController.getConnection().setAutoCommit(false);
 
     // Insert the product in the DB
     int orderID = dbCon.insert(
@@ -153,24 +156,43 @@ public class OrderController {
             + order.getUpdatedAt()
             + ")");
 
-    if (orderID != 0) {
-      //Update the productid of the product before returning
-      order.setId(orderID);
+      if (orderID != 0) {
+          //Update the productid of the product before returning
+          order.setId(orderID);
 
 
-      // Create an empty list in order to go trough items and then save them back with ID
-      ArrayList<LineItem> items = new ArrayList<LineItem>();
+          // Create an empty list in order to go trough items and then save them back with ID
+          ArrayList<LineItem> items = new ArrayList<LineItem>();
 
-      // Save line items to database
-      for (LineItem item : order.getLineItems()) {
-        item = LineItemController.createLineItem(item, order.getId());
-        items.add(item);
-      }
+          // Save line items to database
+          for (LineItem item : order.getLineItems()) {
+              item = LineItemController.createLineItem(item, order.getId());
+              items.add(item);
+              DatabaseController.getConnection().commit();
+          }
 
-      order.setLineItems(items);
-    }
+      }}catch (SQLException e ) {
 
-    // Return order
-    return order;
-  }
-}
+              JDBCTutorialUtilities.printSQLException(e);
+              if (DatabaseController.getConnection() != null) {
+                  try {
+                      System.err.print("Transaction is being rolled back");
+                      DatabaseController.getConnection().rollback();
+                  } catch(SQLException excep) {
+                      JDBCTutorialUtilities.printSQLException(excep);
+                  }
+              finally {
+
+                  }
+           if (order != null) {
+
+               order.close();
+           }
+
+
+           DatabaseController.getConnection().setAutoCommit(true);
+
+
+}}
+
+  return order; }}

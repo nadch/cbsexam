@@ -128,10 +128,23 @@ public class UserEndpoints  {
     return Response.status(200).entity("You user has now been deleted. Goodbye buddy, you meant a lot to us.").build();
   }
 
-  // TODO: Make the system able to update users
-  public Response updateUser(String x) {
+  // TODO: Make the system able to update users (FIXED)
 
-    // Return a response with status 200 and JSON as type
-    return Response.status(400).entity("Endpoint not implemented yet").build();
-  }
-}
+
+  public Response updateUser(String updated) {
+
+
+      User user = new Gson().fromJson(updated, User.class);
+
+      // Return the data to the user
+      if (UserController.updateUser(user, user.getToken())) {
+
+          //Opdatere Cache
+          userCache.getUsers(true);
+
+          // Return a response with status 200 and JSON as type
+          return Response.status(200).entity("User has been updated").build();
+      } else { return Response.status(400).entity("No user found").build(); }
+
+
+  }}

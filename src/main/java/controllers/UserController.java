@@ -3,6 +3,10 @@ package controllers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import model.User;
 import utils.Hashing;
 import utils.Log;
@@ -118,6 +122,34 @@ public class UserController {
       return "";
   }
 
+    public static boolean updateUser(User user, String token) {
+
+        Hashing hashing = new Hashing();
+
+        // Check for DB Connection
+        if (dbCon == null) {
+            dbCon = new DatabaseController();
+        }
+
+        DecodedJWT jwt = null;
+        try {
+            Algorithm algorithm = Algorithm.HMAC256("secret");
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer("auth0")
+                    .build(); //Reusable verifier instance
+            jwt = verifier.verify(token);
+        } catch (JWTVerificationException exception) {
+            //Invalid signature/claims
+        }
+
+        String sql =
+                "UPDATE user SET first_name = '" + user.getFirstname() + "', last_name ='" + user.getLastname()
+                        + "', password = '" + hashing.hashWithSalt(user.getPassword()) + "', email ='" + user.getEmail()
+                        + "' WHERE id = " + jwt.getClaim("userid").asInt();
+
+        return dbCon.updateUser(sql);
+    }
+
   public static boolean loginUser(User user) {
 
       // Check for DB Connection
@@ -163,67 +195,49 @@ public class UserController {
 
   }
 
+    public static User createUser(User user) {
 
+        // Write in log that we've reach this step
+        Log.writeLog(UserController.class.getName(), user, "Actually creating a user in DB", 0);
 
+        // Set creation time for user.
+        user.setCreatedTime(System.currentTimeMillis() / 1000L);
 
-  public static User createUser(User user) {
+        // Check for DB Connection
+        if (dbCon == null) {
+            dbCon = new DatabaseController();
+        }
 
-    // Write in log that we've reach this step
-    Log.writeLog(UserController.class.getName(), user, "Actually creating a user in DB", 0);
+        // Insert the user in the DB
+        // TODO: Hash the user password before saving it. (FIXED)
 
-    // Set creation time for user.
-    user.setCreatedTime(System.currentTimeMillis() / 1000L);
+        int userID = dbCon.insert(
+                "INSERT INTO user (first_name, last_name, password, email, created_at) VALUES('"
+                        + user.getFirstname()
+                        + "', '"
+                        + user.getLastname()
+                        + "', '"
+                        + Hashing.md5(user.getPassword())
+                        + "', '"
+                        + user.getEmail()
+                        + "', "
+                        + user.getCreatedTime()
+                        + ")");
 
-    // Check for DB Connection
-    if (dbCon == null) {
-      dbCon = new DatabaseController();
+        if (userID != 0) {
+            //Update the userid of the user before returning
+            user.setId(userID);
+        } else {
+            // Return null if user has not been inserted into database
+            return null;
+        }
+
+        // Return user
+        return user;
     }
 
-      PreparedStatement nyeBruger = null;
-
-    String nyeBrugerSql = "INSERT INTO user(first_name, last_name, password, email, created_at) VALUES('"
-            + user.getFirstname()
-            + "', '"
-            + user.getLastname()
-            + "', '"
-            + Hashing.hashWithSalt(user.getPassword())
-            + "', '"
-            + user.getEmail()
-            + "', "
-            + user.getCreatedTime()
-            + ")";
-
-      try {
-          dbCon.setAutoCommit(false);
-          nyeBrugerSql = dbCon.prepareStatement(nyeBruger);
 
 
-          for (Map.Entry<String, Integer> e : salesForWeek.entrySet()) {
-
-              nyeBruger.
-              dbCon.commit();
-
-
-          }}
-  } catch (SQLException e ) {
-        JDBCTutorialUtilities.printSQLException(e);
-        if (con != null) {
-            try {
-                System.err.print("Transaction is being rolled back");
-                con.rollback();
-            } catch(SQLException excep) {
-                JDBCTutorialUtilities.printSQLException(excep);
-            }
-        }
-    } finally {
-        if (updateSales != null) {
-            updateSales.close();
-        }
-        if (updateTotal != null) {
-            updateTotal.close();
-        }
-        con.setAutoCommit(true);
-    }
 
       }
 

@@ -135,6 +135,23 @@ public class DatabaseController {
     // Return the resultset which at this point will be null
     return result;
   }
+
+  public boolean updateUser(String sql) {
+
+    if (connection == null)
+      connection = getConnection();
+
+    try {
+      PreparedStatement statement = connection.prepareStatement(sql);
+      statement.executeUpdate();
+      return true;
+
+    } catch (SQLException ex) {
+      System.out.println(ex.getMessage());
+    }
+    return false;
+  }
+
 }
 
 
