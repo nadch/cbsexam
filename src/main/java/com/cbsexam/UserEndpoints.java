@@ -34,7 +34,7 @@ public class UserEndpoints  {
     // Convert the user object to json in order to return the object
     String json = new Gson().toJson(user);
 
-    json= Encryption.encryptDecryptXOR(json);
+    //json= Encryption.encryptDecryptXOR(json);
 
     // Return the user with the status code 200
     // TODO: What should happen if something breaks down? (FIXED)
@@ -66,7 +66,7 @@ public class UserEndpoints  {
     // Transfer users to json in order to return it to the user
     String json = new Gson().toJson(users);
 
-    json=Encryption.encryptDecryptXOR(json);
+    //json=Encryption.encryptDecryptXOR(json);
 
     // Return the users with the status code 200
     return Response.status(200).type(MediaType.APPLICATION_JSON).entity(json).build();
@@ -116,7 +116,7 @@ public class UserEndpoints  {
     // Return a response with status 200 and JSON as type
   }
 
-  // TODO: Make the system able to delete users(Verify)
+  // TODO: Make the system able to delete users(FIXED)
   public Response deleteUser(String gone) {
 
       User UserToDelete = new Gson().fromJson(gone, User.class);

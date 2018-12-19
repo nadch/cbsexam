@@ -97,7 +97,7 @@ public class ProductController {
       dbCon = new DatabaseController();
     }
 
-    //  TODO: Use caching layer.
+    //  TODO: Use caching layer. (FIXED)
     String sql = "SELECT * FROM product";
 
     ResultSet rs = dbCon.query(sql);
@@ -128,7 +128,7 @@ public class ProductController {
     // Write in log that we've reach this step
     Log.writeLog(ProductController.class.getName(), product, "Actually creating a product in DB", 0);
 
-    // Set creation time for product.
+
     product.setCreatedTime(System.currentTimeMillis() / 1000L);
 
     // Check for DB Connection

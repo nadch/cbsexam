@@ -136,7 +136,7 @@ public class OrderController {
     // Save the user to the database and save them back to initial order instance
     order.setCustomer(UserController.createUser(order.getCustomer()));
 
-    // TODO: Enable transactions in order for us to not save the order if somethings fails for some of the other inserts. (kan det passe?)
+    // TODO: Enable transactions in order for us to not save the order if somethings fails for some of the other inserts. (FIXED)
    try{
        DatabaseController.getConnection().setAutoCommit(false);
 
@@ -171,28 +171,18 @@ public class OrderController {
               DatabaseController.getConnection().commit();
           }
 
-      }}catch (SQLException e ) {
+      }} catch (SQLException e ) {
 
-              JDBCTutorialUtilities.printSQLException(e);
+            e.printStackTrace();
               if (DatabaseController.getConnection() != null) {
                   try {
                       System.err.print("Transaction is being rolled back");
                       DatabaseController.getConnection().rollback();
-                  } catch(SQLException excep) {
-                      JDBCTutorialUtilities.printSQLException(excep);
+                  } catch (SQLException e1) {
+                      e1.printStackTrace();
                   }
-              finally {
 
-                  }
-           if (order != null) {
-
-               order.close();
-           }
-
-
-           DatabaseController.getConnection().setAutoCommit(true);
-
-
-}}
+                  DatabaseController.getConnection().setAutoCommit(true);
+              }}
 
   return order; }}

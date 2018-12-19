@@ -32,7 +32,7 @@ public class ProductEndpoints {
     // We convert the java object to json with GSON library imported in Maven
     String json = new Gson().toJson(product);
 
-    json=Encryption.encryptDecryptXOR(json);
+    //json=Encryption.encryptDecryptXOR(json);
 
     // Return a response with status 200 and JSON as type
     return Response.status(200).type(MediaType.TEXT_PLAIN_TYPE).entity(json).build();
@@ -52,7 +52,7 @@ public class ProductEndpoints {
     // We convert the java object to json with GSON library imported in Maven
     String json = new Gson().toJson(products);
 
-    json= Encryption.encryptDecryptXOR(json);
+    //json= Encryption.encryptDecryptXOR(json);
 
     // Return a response with status 200 and JSON as type
     return Response.status(200).type(MediaType.TEXT_PLAIN_TYPE).entity(json).build();

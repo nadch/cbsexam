@@ -159,7 +159,7 @@ public class UserController {
       }
 
       // Build SQL
-      String sql = "SELECT * FROM user where email = " + user.email + " and password = " + user.getPassword();
+      String sql = "SELECT * FROM user WHERE email = '" + user.email + "' AND password = " + user.getPassword();
 
       // Actually do the query
       ResultSet rs = dbCon.query(sql);
@@ -177,6 +177,7 @@ public class UserController {
 
     return true;
   }
+
   public static boolean deleteUser(User user) {
 
       if (dbCon == null) {
@@ -184,14 +185,13 @@ public class UserController {
       }
 
       // Build SQL
-      String sql = "DELETE FROM user WHERE id = " + user.id + "and Token" + user.getToken();
+      String sql = " DELETE FROM user WHERE id = '" + user.id + "'and Token" + user.getToken();
 
       // Do the query and initialyze an empty list for use if we don't get results
       int d = dbCon.returnIfDeleted(sql);
 
       if (d==0){return false;} else {return true;}
 
-      //husk at implementer så token skal til for at slette en bruger.
 
   }
 
