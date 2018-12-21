@@ -159,7 +159,7 @@ public class UserController {
       }
 
       // Build SQL
-      String sql = "SELECT * FROM user WHERE email = '" + user.email + "' AND password = " + user.getPassword();
+      String sql = "SELECT * FROM user WHERE email = '" + user.email + "' AND password = '" + user.getPassword();
 
       // Actually do the query
       ResultSet rs = dbCon.query(sql);
@@ -212,12 +212,12 @@ public class UserController {
         // TODO: Hash the user password before saving it. (FIXED)
 
         int userID = dbCon.insert(
-                "INSERT INTO user (first_name, last_name, password, email, created_at) VALUES('"
+                "INSERT INTO user(first_name, last_name, password, email, created_at) VALUES('"
                         + user.getFirstname()
                         + "', '"
                         + user.getLastname()
                         + "', '"
-                        + Hashing.md5(user.getPassword())
+                        + Hashing.sha(user.getPassword())
                         + "', '"
                         + user.getEmail()
                         + "', "
@@ -234,10 +234,8 @@ public class UserController {
 
         // Return user
         return user;
+
+
     }
-
-
-
-
-      }
+}
 
